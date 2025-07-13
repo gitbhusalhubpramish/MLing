@@ -21,11 +21,11 @@ class Pixel:
       max_dist = (2 * (self.size / 2) ** 2) ** 0.5  # max distance: corner to center
       closeness = 1 - min(dist / max_dist, 1)       # 1 = center, 0 = edge
 
-      self.val = closeness
+      self.val = max(closeness,self.val)
       shade = int(255 * self.val)
-      self.color = (shade, shade, 200)
-    else:
-      self.color = (0, 0, 200)
+      self.color = (shade, shade, shade)
+    elif not self.val:
+      self.color = (0, 0, 0)
 
   def draw(self):
     pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.size, self.size))
