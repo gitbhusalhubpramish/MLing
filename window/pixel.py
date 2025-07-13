@@ -29,3 +29,6 @@ class Pixel:
 
   def draw(self):
     pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.size, self.size))
+  def reset(self):
+    self.val = 0
+    self.color = (0, 0, 0)

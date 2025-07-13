@@ -22,13 +22,13 @@ class Window:
       for pixel in row:
         pixel.update(mouse_x, mouse_y)
         pixel.draw()
-        pygame.display.update()
+    pygame.display.update()
     self.getdata()
   def reset(self):
     for row in self.pixels:
       for pixel in row:
-        self.data = []
-        pixel.val = 0
+        pixel.reset()
         pixel.draw()
-        pygame.display.update()
+    self.getdata()
+    pygame.display.update()
     print(f"rst {self.data}")
