@@ -9,7 +9,6 @@ class Window:
     self.run(0,0)
     self.data = []
     self.reset()
-    pygame.display.update()
     
   def getdata(self):
     data = []
@@ -22,10 +21,8 @@ class Window:
       for pixel in row:
         pixel.update(mouse_x, mouse_y)
         pixel.draw()
-    pygame.display.update()
   def reset(self):
     for row in self.pixels:
       for pixel in row:
         pixel.reset()
         pixel.draw()
-    pygame.display.update()

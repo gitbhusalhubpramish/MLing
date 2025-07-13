@@ -13,7 +13,6 @@ class reset:
     self.text_surface = self.font.render(self.text, True, (0, 0, 0))
     self.text_rect = self.text_surface.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
     self.draw()
-    pygame.display.update()
     
   def draw(self):
     pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.width, self.height))

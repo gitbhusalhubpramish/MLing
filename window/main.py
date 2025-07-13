@@ -41,6 +41,7 @@ def main():
           getdata_button.getdata()
         if train_button.clicked(mouse_x, mouse_y):
           train_button.draw()
+    pygame.display.update()
       
 
 if __name__ == "__main__":

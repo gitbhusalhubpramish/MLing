@@ -16,7 +16,6 @@ class getdata:
   def draw(self):
     pygame.draw.rect(self.screen, self.color, (self.x, self.y, self.width, self.height))
     self.screen.blit(self.text_surface, self.text_rect)
-    pygame.display.update()
   def clicked(self, mouse_x, mouse_y):
     if self.x <= mouse_x <= self.x + self.width and self.y <= mouse_y <= self.y + self.height:
       print("clicked getdata")

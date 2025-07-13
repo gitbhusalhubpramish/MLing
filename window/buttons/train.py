@@ -1,6 +1,6 @@
 import os
 import pygame
-from feed import feed
+from .feed import feed
 class train:
   def __init__(self, x, y, width, height, screen, window):
     self.x = x
@@ -34,6 +34,6 @@ class train:
       self.feed.height = 50
       self.feed.draw()
     else:
-      self.feed.width = 0
-      self.feed.height = 0
-      self.feed.draw()
+      del self.feed
+      print("feed deleted")
+      self.feed = feed(500, 250, 100, 50, self.screen,self.window)
