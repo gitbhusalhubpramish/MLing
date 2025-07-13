@@ -15,7 +15,7 @@ def main():
   screen.fill((93, 102, 88))
   running = True
   windows = Window(281, 281, screen)
-  reset_button = reset(300, 300, 100, 50, screen, windows)
+  reset_button = reset(500, 20, 100, 50, screen, windows)
   
   while running:
     reset_button.draw()
