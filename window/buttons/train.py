@@ -33,8 +33,8 @@ class train:
         self.feed = None  # Remove reference
         print("feed deleted")
       return True
-  def training(self):
+  def training(self, clicked):
     if self.train and self.feed:
       self.feed.draw()
-      if self.feed.clicked(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]):
+      if self.feed.clicked(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], clicked):
         self.feed.feed()

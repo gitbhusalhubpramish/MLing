@@ -20,6 +20,7 @@ def main():
   reset_button = reset(500, 20, 100, 50, screen, windows)
   getdata_button = getdata(500, 100, 100, 50, screen, windows)
   train_button = train(500, 180, 100, 50, screen, windows)
+  clicked = False
   
   
   while running:
@@ -28,7 +29,7 @@ def main():
     reset_button.draw()
     getdata_button.draw()
     train_button.draw()
-    train_button.training()
+    train_button.training(clicked)
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
@@ -37,12 +38,15 @@ def main():
         windows.run(mouse_x, mouse_y)
       if event.type == pygame.MOUSEBUTTONDOWN:
         mouse_x, mouse_y = event.pos
+        clicked = True
         if reset_button.clicked(mouse_x, mouse_y):
           reset_button.reset()
         if getdata_button.clicked(mouse_x, mouse_y):
           getdata_button.getdata()
         if train_button.clicked(mouse_x, mouse_y):
           train_button.draw()
+      else:
+        clicked = False
          
     pygame.display.update()
       
