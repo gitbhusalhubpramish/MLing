@@ -4,6 +4,7 @@ import os
 from window import Window
 from buttons.reset import reset
 from buttons.getdata import getdata
+from buttons.train import train
 
 
 
@@ -18,11 +19,13 @@ def main():
   windows = Window(280, 280, screen)
   reset_button = reset(500, 20, 100, 50, screen, windows)
   getdata_button = getdata(500, 100, 100, 50, screen, windows)
+  train_button = train(500, 180, 100, 50, screen, windows)
   
   
   while running:
     reset_button.draw()
     getdata_button.draw()
+    train_button.draw()
     
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -36,6 +39,8 @@ def main():
           reset_button.reset()
         if getdata_button.clicked(mouse_x, mouse_y):
           getdata_button.getdata()
+        if train_button.clicked(mouse_x, mouse_y):
+          train_button.draw()
       
 
 if __name__ == "__main__":
