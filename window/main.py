@@ -23,10 +23,12 @@ def main():
   
   
   while running:
+    screen.fill((93, 102, 88))
+    windows.run(0,0)
     reset_button.draw()
     getdata_button.draw()
     train_button.draw()
-    
+    train_button.training()
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         running = False
@@ -41,6 +43,7 @@ def main():
           getdata_button.getdata()
         if train_button.clicked(mouse_x, mouse_y):
           train_button.draw()
+         
     pygame.display.update()
       
 

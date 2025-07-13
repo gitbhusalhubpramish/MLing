@@ -1,4 +1,5 @@
 import pygame
+import os
 class feed:
   def __init__(self, x, y, width, height, screen, window):
     self.x = x
@@ -19,3 +20,6 @@ class feed:
     if self.x <= mouse_x <= self.x + self.width and self.y <= mouse_y <= self.y + self.height:
       print("clicked feed")
       return True
+  def feed(self):
+    print("feeding")
+    self.root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
