@@ -1,5 +1,5 @@
 import pygame
-from pixel import Pixel
+from .pixel import Pixel
 class Window:
   def __init__(self, width, height, screen):
     self.width = width
