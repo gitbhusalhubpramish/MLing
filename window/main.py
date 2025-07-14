@@ -6,9 +6,8 @@ from .buttons.reset import reset
 from .buttons.getdata import getdata
 from .buttons.train import train
 
-os.environ["SDL_VIDEODRIVER"] = "dummy"
-if platform.system() == "linux":
-  os.environ['SDL_VIDEODRIVER'] = 'x11'
+# Remove dummy driver and let Replit handle VNC automatically
+if platform.system() == "Linux":
   os.environ['DISPLAY'] = ':0'
 
 pygame.init()
