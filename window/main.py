@@ -6,7 +6,7 @@ from .buttons.reset import reset
 from .buttons.getdata import getdata
 from .buttons.train import train
 
-if platform.system() == "linux":
+if platform.system() == "Linux":
   os.environ['SDL_VIDEODRIVER'] = 'x11'
   os.environ['DISPLAY'] = ':0'
 
