@@ -8,9 +8,12 @@ from .buttons.train import train
 
 if platform.system() == "linux":
   os.environ['SDL_VIDEODRIVER'] = 'x11'
+  os.environ['DISPLAY'] = ':0'
+
 pygame.init()
 pygame.display.set_caption("drawing area")
 screen = pygame.display.set_mode((640, 480))
+pygame.display.flip()  # Ensure the display is updated
 screen.fill((93, 102, 88))
 windows = Window(280, 280, screen)
 reset_button = reset(500, 20, 100, 50, screen, windows)
@@ -49,7 +52,7 @@ def main():
     # if train_button.start_traning:
     #   print("start training")
     #   break
-  # pygame.quit()
+  pygame.quit()
   print("done")
 
 if __name__ == "__main__":
