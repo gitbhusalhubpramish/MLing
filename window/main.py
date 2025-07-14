@@ -46,7 +46,11 @@ def main():
         clicked = False
          
     pygame.display.update()
-      
+    # if train_button.start_traning:
+    #   print("start training")
+    #   break
+  # pygame.quit()
+  print("done")
 
 if __name__ == "__main__":
   main()

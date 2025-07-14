@@ -15,6 +15,7 @@ class train:
     self.text_rect = self.text_surface.get_rect(center=(self.x + self.width / 2, self.y + self.height / 2))
     self.train = False
     self.feed = None
+    self.start_traning = False
     self.draw()
   def draw(self):
     if not self.train:
@@ -32,6 +33,7 @@ class train:
       else:
         self.feed = None  # Remove reference
         print("feed deleted")
+        self.start_traning = True
       return True
   def training(self, clicked):
     if self.train and self.feed:
