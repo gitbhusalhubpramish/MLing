@@ -20,6 +20,6 @@ def sigmodi(x):
 def load(input, w, b, fun):
   return np.dot(input, w) + b if fun == "relu" else sigmodi(np.dot(input, w) + b) if fun == "sigmodi" else softmax(np.dot(input, w) + b)
 
-def main(input):
-  output = load(load(load(input, W1, b1, "softmax"), W2, b2, "relu"), W3, b3, "sigmodi")
-  print(output)
+def main(input, obj):
+  obj.output = load(load(load(input, W1, b1, "softmax"), W2, b2, "relu"), W3, b3, "sigmodi")
+  print(obj.output)
