@@ -5,23 +5,27 @@ from .window import Window
 from .buttons.reset import reset
 from .buttons.getdata import getdata
 from .buttons.train import train
+from .buttons.run import Run
 
-os.environ["SDL_VIDEODRIVER"] = "dummy"
-if platform.system() == "linux":
-  os.environ['SDL_VIDEODRIVER'] = 'x11'
-  os.environ['DISPLAY'] = ':0'
 
-pygame.init()
-pygame.display.set_caption("drawing area")
-screen = pygame.display.set_mode((640, 480))
-pygame.display.flip()  # Ensure the display is updated
-screen.fill((93, 102, 88))
-windows = Window(280, 280, screen)
-reset_button = reset(500, 20, 100, 50, screen, windows)
-getdata_button = getdata(500, 100, 100, 50, screen, windows)
-train_button = train(500, 180, 100, 50, screen, windows)
 
 def main():
+  os.environ["SDL_VIDEODRIVER"] = "dummy"
+  if platform.system() == "Linux":
+    # Only set DISPLAY if not already set (for headless servers)
+    if "DISPLAY" not in os.environ:
+        os.environ["DISPLAY"] = ":0"
+
+  pygame.init()
+  pygame.display.set_caption("drawing area")
+  screen = pygame.display.set_mode((640, 480))
+  pygame.display.flip()  # Ensure the display is updated
+  screen.fill((93, 102, 88))
+  windows = Window(280, 280, screen)
+  reset_button = reset(500, 20, 100, 50, screen, windows)
+  getdata_button = getdata(500, 100, 100, 50, screen, windows)
+  train_button = train(500, 180, 100, 50, screen, windows)
+  run_button = Run(500, 250, 100, 50, screen, windows)
   running = True
   clicked = False
   while running:
@@ -30,6 +34,7 @@ def main():
     reset_button.draw()
     getdata_button.draw()
     train_button.draw()
+    run_button.draw()
     train_button.training(clicked)
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -46,13 +51,12 @@ def main():
           getdata_button.getdata()
         if train_button.clicked(mouse_x, mouse_y):
           train_button.draw()
+        if run_button.clicked(mouse_x, mouse_y):
+          run_button.runModel()
       else:
         clicked = False
          
     pygame.display.update()
-    # if train_button.start_traning:
-    #   print("start training")
-    #   break
   pygame.quit()
   print("done")
 
