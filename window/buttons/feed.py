@@ -11,6 +11,8 @@ class feed:
     self.window = window
     self.color = (255, 255, 255)
     self.data = {'data': []}
+    with open("data.json", "r") as f:
+      self.data = json.load(f)
     self.text = "feed"
     self.font = pygame.font.SysFont(None, 24)
     self.text_surface = self.font.render(self.text, True, (0, 0, 0))
