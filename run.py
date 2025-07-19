@@ -23,7 +23,16 @@ def load(input, w, b, fun):
   elif fun == "softmax":
       return softmax(z)
   else:
-      raise ValueError("Unknown activation")
+      return z
+
+def forward(input):
+    a1 = load(input, W1, b1, "relu")
+    a2 = load(a1, W2, b2, "relu")
+    a3 = load(a2, W3, b3, "softmax")
+    z1 = np.dot(W1, input) + b1
+    z2 = np.dot(W2, a1) + b2
+    z3 = np.dot(W3, a2) + b3
+    return a1, z1, a2, z2, a3, z3
 
 def main(input, obj):
   a1 = load(input, W1, b1, "relu")

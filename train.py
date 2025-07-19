@@ -1,5 +1,6 @@
 import numpy as np
 import json
+from run import forward
 
 # Activation functions
 def relu(z):
@@ -12,6 +13,9 @@ def softmax(z):
     # Subtract max for numerical stability to prevent overflow with large exp values
     z_exp = np.exp(z - np.max(z, axis=-1, keepdims=True))
     return z_exp / np.sum(z_exp, axis=-1, keepdims=True)
+
+def cross_entropy_derivative(pred, target):
+    return pred - target 
 
 # Categorical Cross-Entropy Loss
 def categorical_cross_entropy_loss(output, target):
@@ -31,14 +35,15 @@ def init_weights():
     (Input -> 16 hidden -> 16 hidden -> 10 output).
     """
     # W1: (neurons in layer 1, input features)
-    W1 = np.random.randn(16, 784) * 0.01
     b1 = np.zeros(16)
     # W2: (neurons in layer 2, neurons in layer 1)
-    W2 = np.random.randn(16, 16) * 0.01
     b2 = np.zeros(16)
     # W3: (output classes, neurons in layer 2)
-    W3 = np.random.randn(10, 16) * 0.01
     b3 = np.zeros(10)
+    W1 = np.random.randn(16, 784) * np.sqrt(2. / 784)
+    W2 = np.random.randn(16, 16) * np.sqrt(2. / 16)
+    W3 = np.random.randn(10, 16) * np.sqrt(2. / 16)
+
 
     np.savez("model_params.npz", W1=W1, b1=b1, W2=W2, b2=b2, W3=W3, b3=b3)
     print("Model initialized and saved to model_params.npz")
@@ -52,17 +57,17 @@ def backward(x, y_true, z1, a1, z2, a2, z3, a3, W3, W2):
     """
     # For Softmax + Categorical Cross-Entropy, dL/dz3 = a3 - y_true
     dz3 = a3 - y_true            # (10,)
-    dW3 = np.outer(dz3, a2)      # (10, 16)
+    dW3 = np.dot(dz3[:, np.newaxis], a2[np.newaxis, :])      # (10, 16)
     db3 = dz3                    # (10,)
 
     da2 = np.dot(W3.T, dz3)      # (16,)
     dz2 = da2 * relu_derivative(z2)
-    dW2 = np.outer(dz2, a1)      # (16, 16)
+    dW2 = np.dot(dz2[:, np.newaxis], a1[np.newaxis,:])      # (16, 16)
     db2 = dz2
 
     da1 = np.dot(W2.T, dz2)      # (16,)
     dz1 = da1 * relu_derivative(z1)
-    dW1 = np.outer(dz1, x)       # (16, 784)
+    dW1 = np.dot(dz1[:, np.newaxis], x[np.newaxis,:])       # (16, 784)
     db1 = dz1
 
     return dW1, db1, dW2, db2, dW3, db3
@@ -123,14 +128,6 @@ def train(X_train, y_train, learning_rate=0.001, epochs=100):
 
             # Backward pass
             dW1, db1, dW2, db2, dW3, db3 = backward(x, y_true, z1, a1, z2, a2, z3, a3, W3, W2)
-            if i % 1 == 0: # Print for every sample, adjust frequency as needed
-              print(f"  Sample {i} Gradients:")
-              print(f"    dW1 min/max: {dW1.min():.8f}/{dW1.max():.8f}, mean: {dW1.mean():.8f}")
-              print(f"    db1 min/max: {db1.min():.8f}/{db1.max():.8f}, mean: {db1.mean():.8f}")
-              print(f"    dW2 min/max: {dW2.min():.8f}/{dW2.max():.8f}, mean: {dW2.mean():.8f}")
-              print(f"    db2 min/max: {db2.min():.8f}/{db2.max():.8f}, mean: {db2.mean():.8f}")
-              print(f"    dW3 min/max: {dW3.min():.8f}/{dW3.max():.8f}, mean: {dW3.mean():.8f}")
-              print(f"    db3 min/max: {db3.min():.8f}/{db3.max():.8f}, mean: {db3.mean():.8f}")
 
             # Gradient Clipping (L2 norm clipping, but simple value clipping is used here)
             # Clip values to prevent them from becoming too large
@@ -186,7 +183,7 @@ def main():
     # Start with a conservative learning rate and increase if loss decreases too slowly
     # Given your dataset size, the learning process will be very noisy.
     # Try 0.001 or 0.0005 initially.
-    train(X_train, y_train, learning_rate=0.001, epochs=100)
+    train(X_train, y_train, learning_rate=0.0005, epochs=100000)
 
 
 
