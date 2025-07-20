@@ -73,7 +73,7 @@ def backward(x, y_true, z1, a1, z2, a2, z3, a3, W3, W2):
     return dW1, db1, dW2, db2, dW3, db3
 
 # Training function
-def train(X_train, y_train, learning_rate=0.001, epochs=100):
+def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
     """
     Trains the neural network model.
 
@@ -103,6 +103,9 @@ def train(X_train, y_train, learning_rate=0.001, epochs=100):
     # If there's still a shape mismatch, you might need more robust `fix_shape` or check save/load logic.
 
     max_grad_norm = 5.0 # Gradient clipping norm
+    prev_loss = float("inf")
+    patience_counter = 0
+
 
     for epoch in range(epochs):
         epoch_loss = 0.0
@@ -110,6 +113,9 @@ def train(X_train, y_train, learning_rate=0.001, epochs=100):
         permutation = np.random.permutation(X_train.shape[0])
         X_shuffled = X_train[permutation]
         y_shuffled = y_train[permutation]
+        avg_epoch_loss = epoch_loss / X_shuffled.shape[0]
+        
+
 
         for i in range(X_shuffled.shape[0]):
             x = X_shuffled[i].flatten() # Input features (784,)
@@ -147,7 +153,31 @@ def train(X_train, y_train, learning_rate=0.001, epochs=100):
             b3 -= learning_rate * db3
 
         avg_epoch_loss = epoch_loss / X_shuffled.shape[0]
-        print(f"Epoch {epoch+1}/{epochs}, Average Loss: {avg_epoch_loss:.6f}")
+
+        print(f"Epoch {epoch+1}/{epochs}, Average Loss: {avg_epoch_loss:.6f}, LR: {learning_rate:.6f}")
+
+        # === Adaptive Learning Rate Logic ===
+        loss_delta = prev_loss - avg_epoch_loss
+        improvement_threshold = 1e-4
+
+        if loss_delta < improvement_threshold:
+            patience_counter += 1
+        else:
+            patience_counter = 0
+
+        if patience_counter >= 10:
+            if learning_rate > min_lr:
+                old_lr = learning_rate
+                learning_rate *= 0.5
+                learning_rate = max(learning_rate, min_lr)
+                print(f"⚠️ Reducing LR: {old_lr:.6f} → {learning_rate:.6f} due to plateau.")
+                patience_counter = 0
+            else:
+                print("🛑 Early stopping: no improvement and LR at minimum.")
+                break
+
+        prev_loss = avg_epoch_loss
+
 
     # Save updated weights after training
     np.savez("model_params.npz", W1=W1, b1=b1, W2=W2, b2=b2, W3=W3, b3=b3)
@@ -160,7 +190,7 @@ def train(X_train, y_train, learning_rate=0.001, epochs=100):
 def main():
     with open('data.json', 'r') as f:
         raw = json.load(f)
-    print(f"Loaded data with {len(raw['data'])} samples.")
+    
 
     # Extract inputs and outputs
     X_raw = np.array([sample["input"] for sample in raw["data"]])
@@ -168,7 +198,7 @@ def main():
 
     # --- Data Preprocessing ---
     # 1. Normalize input features (assuming 0-255 pixel values)
-    X_train = X_raw / 255.0
+    X_train = X_raw
     print(f"Input data (X) shape before flatten: {X_train.shape}")
 
     # 2. One-hot encode target labels (assuming 10 classes)
@@ -183,7 +213,8 @@ def main():
     # Start with a conservative learning rate and increase if loss decreases too slowly
     # Given your dataset size, the learning process will be very noisy.
     # Try 0.001 or 0.0005 initially.
-    train(X_train, y_train, learning_rate=0.000001, epochs=100000)
+    train(X_train, y_train, learning_rate=0.001, epochs=10000)
+    print(f"Loaded data with {len(raw['data'])} samples.")
 
 
 

@@ -26,7 +26,9 @@ def main():
 
     with open("data_noisy.json", "w") as f:
         json.dump(noisy_data, f)
-
+    with open("data.json", "w") as f:
+        json.dump(noisy_data, f)
+        print(f"data saved to data.json ({len(noisy_data['data'])} samples)")
     print(f"Noisy data saved to data_noisy.json ({len(noisy_data['data'])} samples)")
 
 if __name__ == "__main__":
