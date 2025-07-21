@@ -31,12 +31,18 @@ class feed:
     pygame.display.update()
     self.window.getdata()
     self.root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
-    out = int(input("enter output: "))
-    while out < 0 or out > 9:
-      out = int(input("invalid input enter output: "))
-    self.data["data"].append({'input':self.window.data,'output': out})
-    file = os.path.join(self.root, "data.json")
-    with open(file, "w") as f:
-      data = json.dumps(self.data)
-      f.write(data)
+    out = input("enter output: ")
+    if out != "nan":
+      out = int(out)
+      
+      while out < 0 or out > 9:
+        out = int(input("invalid input enter output: "))
+        if out == "nan":
+          break
+      if out != "nan":
+        self.data["data"].append({'input':self.window.data,'output': out})
+        file = os.path.join(self.root, "data.json")
+        with open(file, "w") as f:
+          data = json.dumps(self.data)
+          f.write(data)
     self.window.reset()

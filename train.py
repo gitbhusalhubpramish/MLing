@@ -1,6 +1,6 @@
 import numpy as np
 import json
-from run import forward
+import matplotlib.pyplot as plt
 
 # Activation functions
 def relu(z):
@@ -33,7 +33,7 @@ def init_weights():
     """
     Initializes weights and biases for a 3-layer neural network
     (Input -> 16 hidden -> 16 hidden -> 10 output).
-    """
+        """
     # W1: (neurons in layer 1, input features)
     b1 = np.zeros(16)
     # W2: (neurons in layer 2, neurons in layer 1)
@@ -73,7 +73,7 @@ def backward(x, y_true, z1, a1, z2, a2, z3, a3, W3, W2):
     return dW1, db1, dW2, db2, dW3, db3
 
 # Training function
-def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
+def train(X_train, y_train, learning_rate=0.001, epochs=100):
     """
     Trains the neural network model.
 
@@ -103,9 +103,6 @@ def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
     # If there's still a shape mismatch, you might need more robust `fix_shape` or check save/load logic.
 
     max_grad_norm = 5.0 # Gradient clipping norm
-    prev_loss = float("inf")
-    patience_counter = 0
-
 
     for epoch in range(epochs):
         epoch_loss = 0.0
@@ -113,10 +110,8 @@ def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
         permutation = np.random.permutation(X_train.shape[0])
         X_shuffled = X_train[permutation]
         y_shuffled = y_train[permutation]
-        avg_epoch_loss = epoch_loss / X_shuffled.shape[0]
-        
 
-
+        correct_preds = 0
         for i in range(X_shuffled.shape[0]):
             x = X_shuffled[i].flatten() # Input features (784,)
             y_true = y_shuffled[i]      # One-hot encoded target (10,)
@@ -129,6 +124,11 @@ def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
             z3 = np.dot(W3, a2) + b3
             a3 = softmax(z3) # Output probabilities
 
+            predicted_label = np.argmax(a3)
+            actual_label = np.argmax(y_true)
+            if predicted_label == actual_label:
+                correct_preds += 1
+                
             current_loss = categorical_cross_entropy_loss(a3, y_true)
             epoch_loss += current_loss
 
@@ -152,31 +152,9 @@ def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
             W3 -= learning_rate * dW3
             b3 -= learning_rate * db3
 
+        accuracy = correct_preds / X_train.shape[0]
         avg_epoch_loss = epoch_loss / X_shuffled.shape[0]
-
-        print(f"Epoch {epoch+1}/{epochs}, Average Loss: {avg_epoch_loss:.6f}, LR: {learning_rate:.6f}")
-
-        # === Adaptive Learning Rate Logic ===
-        loss_delta = prev_loss - avg_epoch_loss
-        improvement_threshold = 1e-4
-
-        if loss_delta < improvement_threshold:
-            patience_counter += 1
-        else:
-            patience_counter = 0
-
-        if patience_counter >= 10:
-            if learning_rate > min_lr:
-                old_lr = learning_rate
-                learning_rate *= 0.5
-                learning_rate = max(learning_rate, min_lr)
-                print(f"⚠️ Reducing LR: {old_lr:.6f} → {learning_rate:.6f} due to plateau.")
-                patience_counter = 0
-            else:
-                print("🛑 Early stopping: no improvement and LR at minimum.")
-                break
-
-        prev_loss = avg_epoch_loss
+        print(f"Epoch {epoch+1}/{epochs}, Average Loss: {avg_epoch_loss:.8f}, Accuracy: {accuracy*100:.4f}%")
 
 
     # Save updated weights after training
@@ -186,11 +164,11 @@ def train(X_train, y_train, learning_rate=0.001,min_lr=1e-6, epochs=100):
     print(f"Final W2 shape: {W2.shape}, b2 shape: {b2.shape}")
     print(f"Final W3 shape: {W3.shape}, b3 shape: {b3.shape}")
 
-# Main function
+    # Main function
 def main():
     with open('data.json', 'r') as f:
         raw = json.load(f)
-    
+
 
     # Extract inputs and outputs
     X_raw = np.array([sample["input"] for sample in raw["data"]])
@@ -213,7 +191,7 @@ def main():
     # Start with a conservative learning rate and increase if loss decreases too slowly
     # Given your dataset size, the learning process will be very noisy.
     # Try 0.001 or 0.0005 initially.
-    train(X_train, y_train, learning_rate=0.001, epochs=10000)
+    train(X_train, y_train, learning_rate=0.1, epochs=1000)
     print(f"Loaded data with {len(raw['data'])} samples.")
 
 
@@ -222,5 +200,5 @@ if __name__ == "__main__":
     # Run init_weights() once to create the initial model_params.npz file.
     # If model_params.npz already exists and you want to continue training from it,
     # comment out or remove this line.
-  # init_weights()
-  main()
+    # init_weights()
+    main()

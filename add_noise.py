@@ -18,11 +18,13 @@ def main():
     noisy_data = {"data": []}
 
     for sample in original.get("data", []):
+        noisy_data["data"].append(sample)
         noisy_input = add_sparse_noise(sample["input"], noise_level=10, num_noisy=random.randint(5,10))
         noisy_data["data"].append({
             "input": noisy_input,
             "output": sample["output"]
         })
+        
 
     with open("data_noisy.json", "w") as f:
         json.dump(noisy_data, f)
