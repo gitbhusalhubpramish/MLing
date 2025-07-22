@@ -45,4 +45,5 @@ class feed:
         with open(file, "w") as f:
           data = json.dumps(self.data)
           f.write(data)
+        print("saved")
     self.window.reset()

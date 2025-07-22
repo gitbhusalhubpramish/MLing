@@ -191,7 +191,7 @@ def main():
     # Start with a conservative learning rate and increase if loss decreases too slowly
     # Given your dataset size, the learning process will be very noisy.
     # Try 0.001 or 0.0005 initially.
-    train(X_train, y_train, learning_rate=0.1, epochs=1000)
+    train(X_train, y_train, learning_rate=0.01, epochs=1000)
     print(f"Loaded data with {len(raw['data'])} samples.")
 
 
